@@ -1,0 +1,162 @@
+02.19 9:14 PM
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Ashley ❤️</title>
+
+<style>
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: linear-gradient(to bottom, #ff9a9e, #fad0c4);
+}
+
+h1 {
+  color: white;
+}
+
+#puzzle {
+  width: 90vw;
+  max-width: 360px;
+  margin: 20px auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+}
+
+.tile {
+  width: 100%;
+  padding-bottom: 100%;
+  background-image: url("herphoto.jpg");
+  background-size: 300% 300%;
+  cursor: pointer;
+}
+
+.empty {
+  background: transparent;
+}
+
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #ff4f7a;
+  color: white;
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+#reward {
+  display: none;
+  margin-top: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+}
+</style>
+</head>
+<body>
+
+<h1>Happy Birthday Ashley ❤️</h1>
+<p>Solve the puzzle to unlock your surprise </p>
+
+<button onclick="toggleMusic()">Play / Pause Music </button>
+
+<div id="puzzle"></div>
+
+<div id="reward">
+  <h2>You did it! </h2>
+  <p>You complete every piece of my life.</p>
+  <button onclick="revealGift()">Reveal My Gift </button>
+  <p id="gift" style="display:none;"><b>PASTE-YOUR-CODE-HERE</b></p>
+</div>
+
+<audio id="bgMusic" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const size = 3;
+let tiles = [];
+let emptyIndex;
+
+const puzzle = document.getElementById("puzzle");
+
+function init() {
+  let numbers = [...Array(size * size).keys()];
+  
+  // Shuffle
+  numbers.sort(() => Math.random() - 0.5);
+
+  emptyIndex = numbers.indexOf(size * size - 1);
+
+  numbers.forEach((num, index) => {
+    const tile = document.createElement("div");
+    tile.classList.add("tile");
+
+    if (num === size * size - 1) {
+      tile.classList.add("empty");
+    } else {
+      let x = num % size;
+      let y = Math.floor(num / size);
+      tile.style.backgroundPosition =
+        `${(x * 100) / (size - 1)}% ${(y * 100) / (size - 1)}%`;
+    }
+
+    tile.dataset.value = num;
+    tile.addEventListener("click", () => moveTile(index));
+    puzzle.appendChild(tile);
+    tiles.push(tile);
+  });
+}
+
+function moveTile(index) {
+  const validMoves = [
+    emptyIndex - 1,
+    emptyIndex + 1,
+    emptyIndex - size,
+    emptyIndex + size
+  ];
+
+  if (validMoves.includes(index)) {
+    swap(index, emptyIndex);
+    emptyIndex = index;
+    checkWin();
+  }
+}
+
+function swap(i, j) {
+  [tiles[i].dataset.value, tiles[j].dataset.value] =
+  [tiles[j].dataset.value, tiles[i].dataset.value];
+
+  [tiles[i].className, tiles[j].className] =
+  [tiles[j].className, tiles[i].className];
+
+  [tiles[i].style.backgroundPosition, tiles[j].style.backgroundPosition] =
+  [tiles[j].style.backgroundPosition, tiles[i].style.backgroundPosition];
+}
+
+function checkWin() {
+  for (let i = 0; i < tiles.length; i++) {
+    if (parseInt(tiles[i].dataset.value) !== i) return;
+  }
+  document.getElementById("reward").style.display = "block";
+}
+
+function revealGift() {
+  document.getElementById("gift").style.display = "block";
+}
+
+function toggleMusic() {
+  const music = document.getElementById("bgMusic");
+  music.paused ? music.play() : music.pause();
+}
+
+init();
+</script>
+
+</body>
+</html>
