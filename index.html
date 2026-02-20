@@ -1,4 +1,3 @@
-02.19 9:14 PM
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,7 +23,7 @@ h1 {
   margin: 20px auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 3px;
+  gap: 4px;
 }
 
 .tile {
@@ -33,10 +32,16 @@ h1 {
   background-image: url("herphoto.jpg");
   background-size: 300% 300%;
   cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.empty {
-  background: transparent;
+.tile:hover {
+  transform: scale(1.03);
+}
+
+.selected {
+  box-shadow: 0 0 0 4px white;
 }
 
 button {
@@ -61,15 +66,15 @@ button {
 <body>
 
 <h1>Happy Birthday Ashley ❤️</h1>
-<p>Solve the puzzle to unlock your surprise </p>
+<p>Click two pieces to swap them and complete the picture 💕</p>
 
-<button onclick="toggleMusic()">Play / Pause Music </button>
+<button onclick="toggleMusic()">Play / Pause Music</button>
 
 <div id="puzzle"></div>
 
 <div id="reward">
-  <h2>You did it! </h2>
-  <p>You complete every piece of my life.</p>
+  <h2>You did it! 🎉</h2>
+  <p>You complete every piece of my life ❤️</p>
   <button onclick="goToMagazine()">Reveal My Gift ❤️</button>
 </div>
 
@@ -79,65 +84,70 @@ button {
 
 <script>
 const size = 3;
-let tiles = [];
-let emptyIndex;
-
 const puzzle = document.getElementById("puzzle");
+let tiles = [];
+let selectedTile = null;
 
+// Create and shuffle tiles
 function init() {
   let numbers = [...Array(size * size).keys()];
-  
-  // Shuffle
-  numbers.sort(() => Math.random() - 0.5);
-
-  emptyIndex = numbers.indexOf(size * size - 1);
+  shuffle(numbers);
 
   numbers.forEach((num, index) => {
     const tile = document.createElement("div");
     tile.classList.add("tile");
 
-    if (num === size * size - 1) {
-      tile.classList.add("empty");
-    } else {
-      let x = num % size;
-      let y = Math.floor(num / size);
-      tile.style.backgroundPosition =
-        `${(x * 100) / (size - 1)}% ${(y * 100) / (size - 1)}%`;
-    }
+    const x = num % size;
+    const y = Math.floor(num / size);
+
+    tile.style.backgroundPosition =
+      `${(x * 100) / (size - 1)}% ${(y * 100) / (size - 1)}%`;
 
     tile.dataset.value = num;
-    tile.addEventListener("click", () => moveTile(index));
+    tile.addEventListener("click", () => selectTile(tile));
+
     puzzle.appendChild(tile);
     tiles.push(tile);
   });
 }
 
-function moveTile(index) {
-  const validMoves = [
-    emptyIndex - 1,
-    emptyIndex + 1,
-    emptyIndex - size,
-    emptyIndex + size
-  ];
+// Shuffle function
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
 
-  if (validMoves.includes(index)) {
-    swap(index, emptyIndex);
-    emptyIndex = index;
+// Handle tile selection & swapping
+function selectTile(tile) {
+  if (!selectedTile) {
+    selectedTile = tile;
+    tile.classList.add("selected");
+  } else if (selectedTile === tile) {
+    tile.classList.remove("selected");
+    selectedTile = null;
+  } else {
+    swapTiles(selectedTile, tile);
+    selectedTile.classList.remove("selected");
+    selectedTile = null;
     checkWin();
   }
 }
 
-function swap(i, j) {
-  [tiles[i].dataset.value, tiles[j].dataset.value] =
-  [tiles[j].dataset.value, tiles[i].dataset.value];
+// Swap logic
+function swapTiles(tile1, tile2) {
+  const tempPos = tile1.style.backgroundPosition;
+  const tempVal = tile1.dataset.value;
 
-  [tiles[i].className, tiles[j].className] =
-  [tiles[j].className, tiles[i].className];
+  tile1.style.backgroundPosition = tile2.style.backgroundPosition;
+  tile1.dataset.value = tile2.dataset.value;
 
-  [tiles[i].style.backgroundPosition, tiles[j].style.backgroundPosition] =
-  [tiles[j].style.backgroundPosition, tiles[i].style.backgroundPosition];
+  tile2.style.backgroundPosition = tempPos;
+  tile2.dataset.value = tempVal;
 }
 
+// Check win condition
 function checkWin() {
   for (let i = 0; i < tiles.length; i++) {
     if (parseInt(tiles[i].dataset.value) !== i) return;
@@ -145,17 +155,16 @@ function checkWin() {
   document.getElementById("reward").style.display = "block";
 }
 
-function revealGift() {
-  document.getElementById("gift").style.display = "block";
-}
-
+// Music control
 function toggleMusic() {
   const music = document.getElementById("bgMusic");
   music.paused ? music.play() : music.pause();
 }
+
+// Redirect
 function goToMagazine() {
   window.location.href = "https://cosmiclove383-sudo.github.io/Birthday-Magazine/";
-  }
+}
 
 init();
 </script>
