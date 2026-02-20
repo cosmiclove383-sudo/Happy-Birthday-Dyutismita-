@@ -70,8 +70,7 @@ button {
 <div id="reward">
   <h2>You did it! </h2>
   <p>You complete every piece of my life.</p>
-  <button onclick="revealGift()">Reveal My Gift </button>
-  <p id="gift" style="display:none;"><b>PASTE-YOUR-CODE-HERE</b></p>
+  <button onclick="goToMagazine()">Reveal My Gift ❤️</button>
 </div>
 
 <audio id="bgMusic" loop>
@@ -154,6 +153,9 @@ function toggleMusic() {
   const music = document.getElementById("bgMusic");
   music.paused ? music.play() : music.pause();
 }
+function goToMagazine() {
+  window.location.href = "https://yourusername.github.io/your-magazine-repo/";
+  }
 
 init();
 </script>
