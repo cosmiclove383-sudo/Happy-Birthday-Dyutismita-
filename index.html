@@ -1,201 +1,152 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday Ashley ❤️</title>
-
-<style>
-body {
-  margin: 0;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-  text-align: center;
-  background: url("background.jpg") no-repeat center center fixed;
-background-size: cover;
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4); /* adjust darkness */
-  z-index: -1;
-}
-
-h1 {
-  color: white;
-}
-
-#puzzle {
-  width: 92vw;
-  max-width: 400px;
-  margin: 20px auto;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 4px;
-}
-
-.tile {
-  width: 100%;
-  padding-bottom: 100%;
-  background-image: url("herphoto.jpg");
-  background-size: 400% 400%;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.tile:hover {
-  transform: scale(1.03);
-}
-
-.selected {
-  box-shadow: 0 0 0 4px white;
-}
-
-button {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
-  background: #ff4f7a;
-  color: white;
-  font-size: 16px;
-  margin: 10px 0;
-}
-
-#reward {
-  display: none;
-  margin-top: 20px;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-}
-</style>
-</head>
-<body>
-
-<div class="header-box">
-  <h1>Happy Birthday Ashley ❤️</h1>
-  <p>Click two pieces to swap them and complete the picture 💕</p>
-</div>
-
-
-<button onclick="toggleMusic()">Play / Pause Music</button>
-
-<div id="puzzle"></div>
-
-<div id="reward">
-  <h2>You did it! 🎉</h2>
-  <p>You complete every piece of my life ❤️</p>
-  <button onclick="goToMagazine()">Click for your surprise ❤️</button>
-</div>
-
-<audio id="bgMusic" loop>
-  <source src="music.mp3" type="audio/mpeg">
-</audio>
-
-<script>
-const size = 4;
-const puzzle = document.getElementById("puzzle");
-let tiles = [];
-let selectedTile = null;
-
-function init() {
-  let numbers = [...Array(size * size).keys()];
-  shuffle(numbers);
-
-  numbers.forEach((num) => {
-    const tile = document.createElement("div");
-    tile.classList.add("tile");
-
-    const x = num % size;
-    const y = Math.floor(num / size);
-
-    tile.style.backgroundPosition =
-      `${(x * 100) / (size - 1)}% ${(y * 100) / (size - 1)}%`;
-
-    tile.dataset.value = num;
-    tile.addEventListener("click", () => selectTile(tile));
-
-    puzzle.appendChild(tile);
-    tiles.push(tile);
-  });
-}
-
+<!DOCTYPE html>  <html>  
+<head>  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>Happy Birthday Ashley ❤️</title>  <style>  
+body {  
+  margin: 0;  
+  padding: 20px;  
+  font-family: Arial, sans-serif;  
+  text-align: center;  
+  background: linear-gradient(to bottom, #ff9a9e, #fad0c4);  
+}  
   
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
+h1 {  
+  color: white;  
+}  
+  
+#puzzle {  
+  width: 92vw;  
+  max-width: 400px;  
+  margin: 20px auto;  
+  display: grid;  
+  grid-template-columns: repeat(4, 1fr);  
+  gap: 4px;  
+}  
+  
+.tile {  
+  width: 100%;  
+  padding-bottom: 100%;  
+  background-image: url("herphoto.jpg");  
+  background-size: 400% 400%;  
+  cursor: pointer;  
+  border-radius: 8px;  
+  transition: transform 0.2s ease, box-shadow 0.2s ease;  
+}  
+  
+.tile:hover {  
+  transform: scale(1.03);  
+}  
+  
+.selected {  
+  box-shadow: 0 0 0 4px white;  
+}  
+  
+button {  
+  padding: 10px 16px;  
+  border: none;  
+  border-radius: 8px;  
+  background: #ff4f7a;  
+  color: white;  
+  font-size: 16px;  
+  margin: 10px 0;  
+}  
+  
+#reward {  
+  display: none;  
+  margin-top: 20px;  
+  background: white;  
+  padding: 20px;  
+  border-radius: 12px;  
+}  
+</style>  </head>  
+<body>  <h1>Happy Birthday Ashley ❤️</h1>  
+<p>Click two pieces to swap them and complete the picture 💕</p>  <button onclick="toggleMusic()">Play / Pause Music</button>
 
-function selectTile(tile) {
-  if (!selectedTile) {
-    selectedTile = tile;
-    tile.classList.add("selected");
-  } 
-  else if (selectedTile === tile) {
-    tile.classList.remove("selected");
-    selectedTile = null;
-  } 
-  else {
-    swapTiles(selectedTile, tile);
-    selectedTile.classList.remove("selected");
-    selectedTile = null;
-    checkWin();
-  }
-}
-
-function swapTiles(tile1, tile2) {
-  const tempPos = tile1.style.backgroundPosition;
-  const tempVal = tile1.dataset.value;
-
-  tile1.style.backgroundPosition = tile2.style.backgroundPosition;
-  tile1.dataset.value = tile2.dataset.value;
-
-  tile2.style.backgroundPosition = tempPos;
-  tile2.dataset.value = tempVal;
-}
-
-function checkWin() {
-  for (let i = 0; i < tiles.length; i++) {
-    if (parseInt(tiles[i].dataset.value) !== i) return;
-  }
-  document.getElementById("reward").style.display = "block";
-}
-
-function toggleMusic() {
-  const music = document.getElementById("bgMusic");
-  music.paused ? music.play() : music.pause();
-}
-
-function goToMagazine() {
-  window.location.href = "https://cosmiclove383-sudo.github.io/Birthday-Magazine/";
-}
-
-
-.header-box {
-  background: #ff6fa5;
-  padding: 20px;
-  border-radius: 16px;
-  max-width: 420px;
-  margin: 0 auto 20px auto;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-
-.header-box h1 {
-  margin: 0 0 10px 0;
-  color: white;
-}
-
-.header-box p {
-  margin: 0;
-  color: white;
-  font-size: 16px;
-  }
-
-init();
-</script>
-
-</body>
+<div id="puzzle"></div>  <div id="reward">  
+  <h2>You did it! 🎉</h2>  
+  <p>You complete every piece of my life ❤️</p>  
+  <button onclick="goToMagazine()">Click for your surprise ❤️</button>  
+</div>  <audio id="bgMusic" loop>  
+  <source src="music.mp3" type="audio/mpeg">  
+</audio>  <script>  
+const size = 4;  
+const puzzle = document.getElementById("puzzle");  
+let tiles = [];  
+let selectedTile = null;  
+  
+function init() {  
+  let numbers = [...Array(size * size).keys()];  
+  shuffle(numbers);  
+  
+  numbers.forEach((num) => {  
+    const tile = document.createElement("div");  
+    tile.classList.add("tile");  
+  
+    const x = num % size;  
+    const y = Math.floor(num / size);  
+  
+    tile.style.backgroundPosition =  
+      `${(x * 100) / (size - 1)}% ${(y * 100) / (size - 1)}%`;  
+  
+    tile.dataset.value = num;  
+    tile.addEventListener("click", () => selectTile(tile));  
+  
+    puzzle.appendChild(tile);  
+    tiles.push(tile);  
+  });  
+}  
+  
+function shuffle(array) {  
+  for (let i = array.length - 1; i > 0; i--) {  
+    const j = Math.floor(Math.random() * (i + 1));  
+    [array[i], array[j]] = [array[j], array[i]];  
+  }  
+}  
+  
+function selectTile(tile) {  
+  if (!selectedTile) {  
+    selectedTile = tile;  
+    tile.classList.add("selected");  
+  }   
+  else if (selectedTile === tile) {  
+    tile.classList.remove("selected");  
+    selectedTile = null;  
+  }   
+  else {  
+    swapTiles(selectedTile, tile);  
+    selectedTile.classList.remove("selected");  
+    selectedTile = null;  
+    checkWin();  
+  }  
+}  
+  
+function swapTiles(tile1, tile2) {  
+  const tempPos = tile1.style.backgroundPosition;  
+  const tempVal = tile1.dataset.value;  
+  
+  tile1.style.backgroundPosition = tile2.style.backgroundPosition;  
+  tile1.dataset.value = tile2.dataset.value;  
+  
+  tile2.style.backgroundPosition = tempPos;  
+  tile2.dataset.value = tempVal;  
+}  
+  
+function checkWin() {  
+  for (let i = 0; i < tiles.length; i++) {  
+    if (parseInt(tiles[i].dataset.value) !== i) return;  
+  }  
+  document.getElementById("reward").style.display = "block";  
+}  
+  
+function toggleMusic() {  
+  const music = document.getElementById("bgMusic");  
+  music.paused ? music.play() : music.pause();  
+}  
+  
+function goToMagazine() {  
+  window.location.href = "https://cosmiclove383-sudo.github.io/Birthday-Magazine/";  
+}  
+  
+init();  
+</script>  </body>  
 </html>
